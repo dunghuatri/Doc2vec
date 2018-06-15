@@ -82,9 +82,16 @@ def Train_doc2vec_model(path,model_name):
     cores = multiprocessing.cpu_count()
     print('Num of cores is %s' % cores)
     model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=10, dm=0)
+
+    print('Tokenize ...')
+    start = timeit.default_timer()
+    token = sentences.to_array()
+    stop = timeit.default_timer()
+    print('Done! time: ', stop - start, ' (s)')
+
     print('Build vocabulary ...')
     start = timeit.default_timer()
-    model.build_vocab(sentences.to_array())
+    model.build_vocab(token)
     stop = timeit.default_timer()
     print('Done! time: ', stop - start, ' (s)')
     # ===============================#
