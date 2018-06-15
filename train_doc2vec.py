@@ -77,7 +77,7 @@ def Train_doc2vec_model(path,model_name):
     # Xét tham số cho model, build vocabulary
     cores = multiprocessing.cpu_count()
     print('Num of cores is %s' % cores)
-    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=cores - 1, dm=0)
+    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=10, dm=0)
     print('Build vocabulary ...')
     model.build_vocab(sentences.to_array())
     print('Done!')
@@ -91,6 +91,7 @@ def Train_doc2vec_model(path,model_name):
     # ===============================#
     # Save model
     print('Save model ...')
+
     model.save(model_name)
     print('Done!')
 if __name__== "__main__":
