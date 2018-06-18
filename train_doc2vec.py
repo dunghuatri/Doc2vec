@@ -75,7 +75,7 @@ def Train_doc2vec_model(path,model_name,_epochs,cores):
     # Xét tham số cho model, build vocabulary
     #cores = multiprocessing.cpu_count()
     #print('Num of cores is %s' % cores)
-    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=cores, dm=0)
+    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=int(cores), dm=0)
 
     print('Tokenize ...')
     start = timeit.default_timer()
@@ -92,7 +92,7 @@ def Train_doc2vec_model(path,model_name,_epochs,cores):
     # Train model
     print('Train model ...')
     start = timeit.default_timer()
-    model.train(sentences.sentences_perm(), total_examples=model.corpus_count, epochs=_epochs)
+    model.train(sentences.sentences_perm(), total_examples=model.corpus_count, epochs=int(_epochs))
     stop = timeit.default_timer()
     print('Done! time: ', stop - start, ' (s)')
     # ===============================#
