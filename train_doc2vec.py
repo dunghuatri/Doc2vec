@@ -47,20 +47,14 @@ class LabeledContent(object):
         self.sentences = []
         item_no = 0
         for source, prefix in self.sources.items():
-
             allFiles = glob.glob(source + "/*.csv")
-            series_ = pd.DataFrame()
-            list_ = []
             for file_ in allFiles:
                 df = pd.read_csv(file_)
                 content = df['content']
-                list_.append(content)
-            series_ = pd.concat(list_)
-            series_ = series_.drop_duplicates()
-            series_ = series_.dropna()
-            for row in series_:
-                self.sentences.append(TaggedDocument(utils.to_unicode(row).split(), [prefix + '_%s' % item_no]))
-                item_no = item_no + 1
+                print('number documents: ', len(content))
+                for row in content:
+                    self.sentences.append(TaggedDocument(utils.to_unicode(row).split(), [prefix + '_%s' % item_no]))
+                    item_no = item_no + 1
         return self.sentences
 
     def sentences_perm(self):
@@ -68,7 +62,7 @@ class LabeledContent(object):
         random.shuffle(shuffled)
         return shuffled
 #---------------------------------------------------------------------------------------------------------------------#
-def Train_doc2vec_model(path,model_name):
+def Train_doc2vec_model(path,model_name,_epochs,cores):
     # ===============================#
     # Xét đường dẫn tới dataset
     sources = {path: 'SAMPLE', }
@@ -79,9 +73,9 @@ def Train_doc2vec_model(path,model_name):
     print('Done! time: ', stop - start, ' (s)')
     # ===============================#
     # Xét tham số cho model, build vocabulary
-    cores = multiprocessing.cpu_count()
-    print('Num of cores is %s' % cores)
-    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=10, dm=0)
+    #cores = multiprocessing.cpu_count()
+    #print('Num of cores is %s' % cores)
+    model = Doc2Vec(min_count=5, window=10, vector_size=400, sample=1e-4, negative=5, workers=cores, dm=0)
 
     print('Tokenize ...')
     start = timeit.default_timer()
@@ -98,7 +92,7 @@ def Train_doc2vec_model(path,model_name):
     # Train model
     print('Train model ...')
     start = timeit.default_timer()
-    model.train(sentences.sentences_perm(), total_examples=model.corpus_count, epochs=1)
+    model.train(sentences.sentences_perm(), total_examples=model.corpus_count, epochs=_epochs)
     stop = timeit.default_timer()
     print('Done! time: ', stop - start, ' (s)')
     # ===============================#
@@ -108,4 +102,4 @@ def Train_doc2vec_model(path,model_name):
     model.save(model_name)
     print('Done!')
 if __name__== "__main__":
-    Train_doc2vec_model(sys.argv[1],sys.argv[2])
+    Train_doc2vec_model(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
